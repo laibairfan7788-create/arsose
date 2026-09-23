@@ -1,0 +1,5 @@
+import bcrypt from 'bcryptjs';import mongoose from 'mongoose';import { config } from '../config.js';import { Enquiry } from '../models/Enquiry.js';
+const args=process.argv.slice(2);const passwordIndex=args.indexOf('--password');const password=passwordIndex>=0?args[passwordIndex+1]:'';
+if(password){if(password.length<12){console.error('Password must be at least 12 characters.');process.exit(1)}console.log(`ADMIN_PASSWORD_HASH=${await bcrypt.hash(password,12)}`);process.exit(0)}
+if(!config.mongoUri){console.error('Set MONGODB_URI to seed development enquiries, or pass --password to generate an admin hash.');process.exit(1)}
+await mongoose.connect(config.mongoUri);await Enquiry.create([{name:'Sample Enquiry — Replace or delete',email:'customer@example.invalid',company:'Sample Company — Placeholder',sector:'general',message:'This is clearly labelled sample seed data for verifying the admin workflow. Replace or delete it before launch.'}]);console.log('Seeded one clearly labelled sample enquiry.');await mongoose.disconnect();
